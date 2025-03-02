@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fasting Glucose Level Checker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Font for a cool-looking style -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to bottom right, #a1c4fd, #c2e9fb); /* Gradient blue background */
+      font-family: Arial, sans-serif;
+    }
+    .box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* Light golden gradient background */
+      background: linear-gradient(135deg, #fff8dc, #f5deb3);
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.7),
+                  0 0 20px rgba(0,0,0,0.5),
+                  0 0 30px rgba(0,0,0,0.3);
+      width: 350px;
+      box-sizing: border-box;
+    }
+    canvas {
+      margin-top: 20px;
+    }
+    input[type="number"] {
+      padding: 5px;
+      margin: 10px 0;
+      width: 100%;
+      height: 40px;
+      box-sizing: border-box;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #6F4E37;  /* Coffee color (matches your name) */
+    }
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+      background-color: #66bb6a;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      transition: background-color 0.3s;
+    }
+    button:hover:enabled {
+      background-color: #43a047;
+    }
+    button:disabled {
+      cursor: not-allowed;
+    }
+    .footer {
+      font-family: 'Pacifico', cursive;
+      font-weight: normal;
+      color: #6F4E37;  /* Coffee color */
+      margin-top: 20px;
+      font-size: 20px;
+    }
+    @media (max-width: 480px) {
+      .box {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Fasting Glucose Level Checker</h1>
+    <label for="glucoseInput">Enter blood glucose level:</label>
+    <input type="number" id="glucoseInput" step="0.1" required placeholder="Enter value in mg/DL">
+    <button id="checkButton" onclick="checkGlucose()" disabled>Check Status</button>
+    <canvas id="resultCanvas" width="300" height="150"></canvas>
+    <p class="footer">Muhammad Abdullah Omer</p>
+  </div>
+
+  <script>
+    const inputField = document.getElementById("glucoseInput");
+    const checkButton = document.getElementById("checkButton");
+    const canvas = document.getElementById("resultCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function updateButtonState() {
+      if (inputField.value.trim() === "") {
+        checkButton.disabled = true;
+        clearCanvas();
+      } else {
+        checkButton.disabled = false;
+      }
+    }
+
+    inputField.addEventListener("input", updateButtonState);
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Helper function to wrap text inside the canvas
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        const metrics = context.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && i > 0) {
+          context.fillText(line, x, y);
+          line = words[i] + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      context.fillText(line, x, y);
+    }
+
+    function checkGlucose() {
+      clearCanvas();
+      
+      const inputVal = inputField.value.trim();
+      if (inputVal === "") return;
+      
+      const value = parseFloat(inputVal);
+      let resultText = "";
+      let color = "";
+
+      if (isNaN(value)) {
+        resultText = "Please enter a valid numerical value in mg/DL.";
+        color = "maroon";
+      } else if (value < 70) {
+        resultText = "Your blood sugar is lower than the normal range. This may indicate hypoglycemia. Consider consulting your doctor.";
+        color = "red";
+      } else if (value <= 99) {
+        resultText = "Your blood sugar is within the normal range. Keep up the healthy lifestyle!";
+        color = "green";
+      } else if (value <= 120) {
+        resultText = "Your blood sugar is slightly higher than normal. You may be prediabetic. Consider consulting a healthcare professional.";
+        color = "red"; // You may change this to 'orange' if desired.
+      } else {
+        resultText = "Your blood sugar is high. This may indicate diabetes. Please consult a healthcare professional.";
+        color = "red";
+      }
+      
+      ctx.font = "16px Arial";
+      ctx.fillStyle = color;
+      wrapText(ctx, resultText, 10, 30, canvas.width - 20, 22);
+      
+      // Update the box's shadow (glow) to match the message color
+      const box = document.querySelector('.box');
+      if (color === "green") {
+          box.style.boxShadow = "0 0 10px rgba(0,255,0,0.7), 0 0 20px rgba(0,255,0,0.5), 0 0 30px rgba(0,255,0,0.3)";
+      } else if (color === "red" || color === "maroon") {
+          box.style.boxShadow = "0 0 10px rgba(255,0,0,0.7), 0 0 20px rgba(255,0,0,0.5), 0 0 30px rgba(255,0,0,0.3)";
+      } else {
+          box.style.boxShadow = "0 0 10px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.3)";
+      }
+    }
+    
+    inputField.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        checkGlucose();
+      }
+    });
+  </script>
+</body>
+</html>
