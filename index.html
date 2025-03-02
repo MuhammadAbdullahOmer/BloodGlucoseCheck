@@ -20,11 +20,12 @@
     }
 
     .container {
-      background: rgba(230, 255, 230, 0.95); /* Light Green */
+      background: rgba(230, 255, 230, 0.95); /* Light green */
       padding: 30px;
       border-radius: 10px;
       text-align: center;
-      box-shadow: 0 8px 25px rgba(0,0,255,0.8); /* Default: glowy blue */
+      /* Default shadow: glowy blue */
+      box-shadow: 0 8px 25px rgba(0, 0, 255, 0.8);
       width: 350px;
       position: relative;
       padding-bottom: 50px;
@@ -33,7 +34,7 @@
     h1 {
       color: #0B3D91;
       margin-bottom: 20px;
-      text-shadow: 0px 0px 10px rgba(33,150,243,0.8);
+      text-shadow: 0 0 10px rgba(33, 150, 243, 0.8);
     }
 
     label {
@@ -43,8 +44,7 @@
       margin-bottom: 5px;
     }
 
-    /* Revamped input field for mobile */
-    /* Using type="text" with numeric hints to trigger numeric keyboard on mobile */
+    /* Use a simple input field of type "text" with numeric hints for mobile */
     input {
       width: 95%;
       padding: 12px;
@@ -64,7 +64,7 @@
       background: #8fdfd2;
     }
 
-    /* Placeholder styling using a CSS variable */
+    /* Placeholder styling via CSS variable */
     #glucose-level::placeholder {
       color: var(--placeholder-color, #2C3E50);
     }
@@ -101,7 +101,7 @@
       bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
       font-weight: bold;
       width: 100%;
     }
@@ -111,63 +111,25 @@
   <div class="container">
     <h1>Blood Glucose Checker</h1>
     <label for="glucose-level">Enter blood glucose level:</label>
-    <!-- Changed to type="text" with inputmode and pattern for numeric keyboard -->
+    <!-- Using type="text" with numeric hints -->
     <input type="text" id="glucose-level" placeholder="Enter value (mg/dL)" inputmode="decimal" pattern="[0-9]*" required>
     <button id="check-status-btn" onclick="checkGlucose();" disabled>Check Status</button>
     <p id="result"></p>
     <p class="urdu-name">محمد عبد اللہ عمر</p>
   </div>
-  
+
   <script>
-    let inputField = document.getElementById("glucose-level");
-    let button = document.getElementById("check-status-btn");
-    let container = document.querySelector(".container");
-    let result = document.getElementById("result");
+    const inputField = document.getElementById("glucose-level");
+    const button = document.getElementById("check-status-btn");
+    const container = document.querySelector(".container");
+    const result = document.getElementById("result");
 
-    // Function to check glucose level
-    function checkGlucose() {
-      let glucoseLevel = inputField.value;
-      if (glucoseLevel === "" || isNaN(glucoseLevel) || glucoseLevel < 0) {
-        result.textContent = "";
-        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)"; // Default: glowy blue
-        inputField.style.setProperty("--placeholder-color", "#2C3E50");
-        return;
-      }
-      glucoseLevel = parseFloat(glucoseLevel);
-      if (glucoseLevel < 40) {
-        result.textContent = `⚠️ ${glucoseLevel} mg/dL - Very Low! Seek immediate help.`;
-        result.style.color = "blue";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Red shadow
-        inputField.style.setProperty("--placeholder-color", "red");
-      } else if (glucoseLevel >= 40 && glucoseLevel < 70) {
-        result.textContent = `⚠️ ${glucoseLevel} mg/dL - Low blood sugar! Eat something & monitor closely.`;
-        result.style.color = "blue";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
-        inputField.style.setProperty("--placeholder-color", "red");
-      } else if (glucoseLevel >= 70 && glucoseLevel < 100) {
-        result.textContent = `✅ ${glucoseLevel} mg/dL - Normal blood sugar level.`;
-        result.style.color = "green";
-        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Strong green shadow
-        inputField.style.setProperty("--placeholder-color", "green");
-      } else if (glucoseLevel >= 100 && glucoseLevel <= 125) {
-        result.textContent = `⚠️ ${glucoseLevel} mg/dL - Prediabetes detected! Consider lifestyle changes.`;
-        result.style.color = "orange";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
-        inputField.style.setProperty("--placeholder-color", "red");
-      } else {
-        result.textContent = `❌ ${glucoseLevel} mg/dL - Diabetes detected! Consult a doctor immediately.`;
-        result.style.color = "red";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
-        inputField.style.setProperty("--placeholder-color", "red");
-      }
-    }
-
-    // Event listener to enable/disable button based on input
-    inputField.addEventListener("input", function() {
+    // Enable or disable the button based on input
+    inputField.addEventListener("input", () => {
       if (inputField.value.trim() === "") {
         button.disabled = true;
         result.textContent = "";
-        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)";
+        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)"; // Default glowy blue
         inputField.style.setProperty("--placeholder-color", "#2C3E50");
       } else {
         button.disabled = false;
@@ -175,8 +137,48 @@
       }
     });
 
-    // Allow Enter key to trigger check
-    inputField.addEventListener("keypress", function(event) {
+    // Function to check glucose level and update the UI
+    function checkGlucose() {
+      let glucoseValue = inputField.value;
+      if (glucoseValue === "" || isNaN(glucoseValue) || glucoseValue < 0) {
+        result.textContent = "";
+        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)";
+        inputField.style.setProperty("--placeholder-color", "#2C3E50");
+        return;
+      }
+
+      glucoseValue = parseFloat(glucoseValue);
+
+      if (glucoseValue < 40) {
+        result.textContent = `⚠️ ${glucoseValue} mg/dL - Very Low! Seek immediate help.`;
+        result.style.color = "blue";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Red shadow
+        inputField.style.setProperty("--placeholder-color", "red");
+      } else if (glucoseValue >= 40 && glucoseValue < 70) {
+        result.textContent = `⚠️ ${glucoseValue} mg/dL - Low blood sugar! Eat something & monitor closely.`;
+        result.style.color = "blue";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
+        inputField.style.setProperty("--placeholder-color", "red");
+      } else if (glucoseValue >= 70 && glucoseValue < 100) {
+        result.textContent = `✅ ${glucoseValue} mg/dL - Normal blood sugar level.`;
+        result.style.color = "green";
+        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Green shadow
+        inputField.style.setProperty("--placeholder-color", "green");
+      } else if (glucoseValue >= 100 && glucoseValue <= 125) {
+        result.textContent = `⚠️ ${glucoseValue} mg/dL - Prediabetes detected! Consider lifestyle changes.`;
+        result.style.color = "orange";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
+        inputField.style.setProperty("--placeholder-color", "red");
+      } else {
+        result.textContent = `❌ ${glucoseValue} mg/dL - Diabetes detected! Consult a doctor immediately.`;
+        result.style.color = "red";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
+        inputField.style.setProperty("--placeholder-color", "red");
+      }
+    }
+
+    // Allow pressing Enter to trigger the check
+    inputField.addEventListener("keypress", (event) => {
       if (event.key === "Enter") {
         checkGlucose();
       }
