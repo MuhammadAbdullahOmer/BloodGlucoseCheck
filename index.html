@@ -113,7 +113,6 @@
     <input type="number" id="glucose-level" placeholder="Enter value (mg/dL)" required>
     <button id="check-status-btn" onclick="checkGlucose(); playClickSound();" disabled>Check Status</button>
     <p id="result"></p>
-
     <p class="urdu-name">محمد عبد اللہ عمر</p>
 
     <!-- Soft Click Sound -->
@@ -159,7 +158,7 @@
       } else if (glucoseLevel >= 70 && glucoseLevel < 100) {
         result.textContent = `✅ ${glucoseLevel} mg/dL - Normal blood sugar level.`;
         result.style.color = "green";
-        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Good: stronger green
+        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Good: strong green
         inputField.style.setProperty("--placeholder-color", "green");
       } else if (glucoseLevel >= 100 && glucoseLevel <= 125) {
         result.textContent = `⚠️ ${glucoseLevel} mg/dL - Prediabetes detected! Consider lifestyle changes.`;
@@ -177,13 +176,13 @@
     // Function to play the click sound immediately without delay
     function playClickSound() {
       let glucoseLevel = inputField.value;
-      if (glucoseLevel.trim() === "") return; // Don't play if input is empty
+      if (glucoseLevel.trim() === "") return;
       sound.currentTime = 0;
       sound.play();
     }
 
-    // Combined event listener to enable/disable the button, clear result,
-    // and play the typing sound on every input keystroke
+    // Combined event listener for input: enable/disable button, clear result,
+    // and set default container shadow and placeholder color when input is empty.
     inputField.addEventListener("input", function() {
       let glucoseLevel = inputField.value;
       let button = document.getElementById("check-status-btn");
@@ -196,7 +195,12 @@
         button.disabled = false;
         document.getElementById("result").textContent = "";
       }
-      // Play typing sound on input
+    });
+
+    // Use keydown for typing sound so that the keyboard opens normally on mobile
+    inputField.addEventListener("keydown", function(event) {
+      // Don't play if the key is Enter
+      if (event.key === "Enter") return;
       let typingSound = document.getElementById("typing-sound");
       typingSound.currentTime = 0;
       typingSound.play();
