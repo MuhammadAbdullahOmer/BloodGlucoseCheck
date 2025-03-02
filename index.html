@@ -24,8 +24,7 @@
       padding: 30px;
       border-radius: 10px;
       text-align: center;
-      /* Default shadow: glowy blue */
-      box-shadow: 0 8px 25px rgba(0,0,255,0.8);
+      box-shadow: 0 8px 25px rgba(0,0,255,0.8); /* Default: glowy blue */
       width: 350px;
       position: relative;
       padding-bottom: 50px;
@@ -44,8 +43,8 @@
       margin-bottom: 5px;
     }
 
-    /* Revamped input field for mobile: using type="text" with numeric hints */
-    <!-– Note: Changing from type="number" to type="text" with inputmode and pattern attributes forces the numeric keyboard on most mobile devices ––>
+    /* Revamped input field for mobile */
+    /* Using type="text" with numeric hints to trigger numeric keyboard on mobile */
     input {
       width: 95%;
       padding: 12px;
@@ -112,93 +111,74 @@
   <div class="container">
     <h1>Blood Glucose Checker</h1>
     <label for="glucose-level">Enter blood glucose level:</label>
-    <!-- Input field revamped: type="text" with numeric hints -->
+    <!-- Changed to type="text" with inputmode and pattern for numeric keyboard -->
     <input type="text" id="glucose-level" placeholder="Enter value (mg/dL)" inputmode="decimal" pattern="[0-9]*" required>
-    <button id="check-status-btn" onclick="checkGlucose(); playClickSound();" disabled>Check Status</button>
+    <button id="check-status-btn" onclick="checkGlucose();" disabled>Check Status</button>
     <p id="result"></p>
     <p class="urdu-name">محمد عبد اللہ عمر</p>
-
-    <!-- Soft Click Sound -->
-    <audio id="click-sound" preload="auto">
-      <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mp3">
-    </audio>
   </div>
-
+  
   <script>
     let inputField = document.getElementById("glucose-level");
+    let button = document.getElementById("check-status-btn");
     let container = document.querySelector(".container");
+    let result = document.getElementById("result");
 
-    // Function to check glucose level when the button is clicked
+    // Function to check glucose level
     function checkGlucose() {
       let glucoseLevel = inputField.value;
-      let result = document.getElementById("result");
-
       if (glucoseLevel === "" || isNaN(glucoseLevel) || glucoseLevel < 0) {
         result.textContent = "";
         container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)"; // Default: glowy blue
-        inputField.style.setProperty("--placeholder-color", "#2C3E50"); // Default placeholder color
+        inputField.style.setProperty("--placeholder-color", "#2C3E50");
         return;
       }
-
       glucoseLevel = parseFloat(glucoseLevel);
-
       if (glucoseLevel < 40) {
         result.textContent = `⚠️ ${glucoseLevel} mg/dL - Very Low! Seek immediate help.`;
         result.style.color = "blue";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Red shadow
         inputField.style.setProperty("--placeholder-color", "red");
       } else if (glucoseLevel >= 40 && glucoseLevel < 70) {
         result.textContent = `⚠️ ${glucoseLevel} mg/dL - Low blood sugar! Eat something & monitor closely.`;
         result.style.color = "blue";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
         inputField.style.setProperty("--placeholder-color", "red");
       } else if (glucoseLevel >= 70 && glucoseLevel < 100) {
         result.textContent = `✅ ${glucoseLevel} mg/dL - Normal blood sugar level.`;
         result.style.color = "green";
-        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Good: strong green
+        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Strong green shadow
         inputField.style.setProperty("--placeholder-color", "green");
       } else if (glucoseLevel >= 100 && glucoseLevel <= 125) {
         result.textContent = `⚠️ ${glucoseLevel} mg/dL - Prediabetes detected! Consider lifestyle changes.`;
         result.style.color = "orange";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
         inputField.style.setProperty("--placeholder-color", "red");
       } else {
         result.textContent = `❌ ${glucoseLevel} mg/dL - Diabetes detected! Consult a doctor immediately.`;
         result.style.color = "red";
-        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)";
         inputField.style.setProperty("--placeholder-color", "red");
       }
     }
 
-    // Function to play the click sound immediately without delay
-    function playClickSound() {
-      let sound = document.getElementById("click-sound");
-      let glucoseLevel = inputField.value;
-      if (glucoseLevel.trim() === "") return;
-      sound.currentTime = 0;
-      sound.play();
-    }
-
-    // Combined event listener to enable/disable the button and clear the result
+    // Event listener to enable/disable button based on input
     inputField.addEventListener("input", function() {
-      let glucoseLevel = inputField.value;
-      let button = document.getElementById("check-status-btn");
-      if (glucoseLevel.trim() === "") {
+      if (inputField.value.trim() === "") {
         button.disabled = true;
-        document.getElementById("result").textContent = "";
-        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)"; // Default: glowy blue
+        result.textContent = "";
+        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)";
         inputField.style.setProperty("--placeholder-color", "#2C3E50");
       } else {
         button.disabled = false;
-        document.getElementById("result").textContent = "";
+        result.textContent = "";
       }
     });
 
-    // Allow the user to press Enter to check glucose level
+    // Allow Enter key to trigger check
     inputField.addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
         checkGlucose();
-        playClickSound();
       }
     });
   </script>
