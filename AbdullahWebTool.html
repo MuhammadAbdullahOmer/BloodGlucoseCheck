@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blood Glucose Checker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #6fa3ef, #b9e5d1);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+      background: rgba(230, 255, 230, 0.95); /* Light Green */
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      /* Default shadow: glowy blue */
+      box-shadow: 0 8px 25px rgba(0,0,255,0.8);
+      width: 350px;
+      position: relative;
+      padding-bottom: 50px;
+    }
+
+    h1 {
+      color: #0B3D91;
+      margin-bottom: 20px;
+      text-shadow: 0px 0px 10px rgba(33, 150, 243, 0.8);
+    }
+
+    label {
+      font-size: 16px;
+      color: #34495E;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 95%;
+      padding: 12px;
+      border: 2px solid #106459;
+      background: #c9dad8;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #2C3E50;
+      outline: none;
+      display: block;
+      margin: 0 auto 15px auto;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #04704c;
+      background: #8fdfd2;
+    }
+
+    /* Placeholder styling using a CSS variable */
+    #glucose-level::placeholder {
+      color: var(--placeholder-color, #2C3E50);
+    }
+
+    button {
+      background-color: #3498DB;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.3s, transform 0.2s;
+      display: block;
+      margin: 0 auto;
+    }
+
+    button:hover {
+      background-color: #2980B9;
+      transform: scale(1.05);
+    }
+
+    p {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .urdu-name {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 18px;
+      color: black;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+      font-weight: bold;
+      width: 100%;
+    }
+
+    /* Added: Style the spinner arrows to a faded brown color */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      filter: brightness(0.9) sepia(0.5) hue-rotate(20deg) saturate(80%);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Blood Glucose Checker</h1>
+    <label for="glucose-level">Enter blood glucose level:</label>
+    <input type="number" id="glucose-level" placeholder="Enter value (mg/dL)" required>
+    <button id="check-status-btn" onclick="checkGlucose(); playClickSound();" disabled>Check Status</button>
+    <p id="result"></p>
+
+    <p class="urdu-name">محمد عبد اللہ عمر</p>
+
+    <!-- Soft Click Sound -->
+    <audio id="click-sound" preload="auto">
+      <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mp3">
+    </audio>
+
+    <!-- Typing Sound -->
+    <audio id="typing-sound" preload="auto">
+      <source src="https://www.soundjay.com/keyboard/sounds/keyboard-1.mp3" type="audio/mp3">
+    </audio>
+  </div>
+
+  <script>
+    let sound = document.getElementById("click-sound");
+    let inputField = document.getElementById("glucose-level");
+    let container = document.querySelector(".container");
+
+    // Function to check glucose level when the button is clicked
+    function checkGlucose() {
+      let glucoseLevel = inputField.value;
+      let result = document.getElementById("result");
+
+      if (glucoseLevel === "" || isNaN(glucoseLevel) || glucoseLevel < 0) {
+        result.textContent = "";
+        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)"; // Default: glowy blue
+        inputField.style.setProperty("--placeholder-color", "#2C3E50"); // Default placeholder color
+        return;
+      }
+
+      glucoseLevel = parseFloat(glucoseLevel);
+
+      if (glucoseLevel < 40) {
+        result.textContent = `⚠️ ${glucoseLevel} mg/dL - Very Low! Seek immediate help.`;
+        result.style.color = "blue";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        inputField.style.setProperty("--placeholder-color", "red");
+      } else if (glucoseLevel >= 40 && glucoseLevel < 70) {
+        result.textContent = `⚠️ ${glucoseLevel} mg/dL - Low blood sugar! Eat something & monitor closely.`;
+        result.style.color = "blue";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        inputField.style.setProperty("--placeholder-color", "red");
+      } else if (glucoseLevel >= 70 && glucoseLevel < 100) {
+        result.textContent = `✅ ${glucoseLevel} mg/dL - Normal blood sugar level.`;
+        result.style.color = "green";
+        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Good: green
+        inputField.style.setProperty("--placeholder-color", "green");
+      } else if (glucoseLevel >= 100 && glucoseLevel <= 125) {
+        result.textContent = `⚠️ ${glucoseLevel} mg/dL - Prediabetes detected! Consider lifestyle changes.`;
+        result.style.color = "orange";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        inputField.style.setProperty("--placeholder-color", "red");
+      } else {
+        result.textContent = `❌ ${glucoseLevel} mg/dL - Diabetes detected! Consult a doctor immediately.`;
+        result.style.color = "red";
+        container.style.boxShadow = "0 8px 25px rgba(255,0,0,0.8)"; // Bad: red
+        inputField.style.setProperty("--placeholder-color", "red");
+      }
+    }
+
+    // Function to play the click sound immediately without delay
+    function playClickSound() {
+      let glucoseLevel = inputField.value;
+      if (glucoseLevel.trim() === "") return; // Don't play if input is empty
+      sound.currentTime = 0;
+      sound.play();
+    }
+
+    // Event listener to enable/disable the button based on input and clear result,
+    // also sets default container shadow and placeholder color when input is empty
+    inputField.addEventListener("input", function() {
+      let glucoseLevel = inputField.value;
+      let button = document.getElementById("check-status-btn");
+      if (glucoseLevel.trim() === "") {
+        button.disabled = true;
+        document.getElementById("result").textContent = "";
+        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)";
+        inputField.style.setProperty("--placeholder-color", "#2C3E50");
+      } else {
+        button.disabled = false;
+        document.getElementById("result").textContent = "";
+      }
+    });
+
+    // Event listener to play typing sound on every keystroke in the input field
+    inputField.addEventListener("input", function() {
+      let typingSound = document.getElementById("typing-sound");
+      typingSound.currentTime = 0;
+      typingSound.play();
+    });
+
+    // Allow the user to press Enter to check glucose level
+    inputField.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        checkGlucose();
+        playClickSound();
+      }
+    });
+  </script>
+</body>
+</html>
