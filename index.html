@@ -104,12 +104,6 @@
       font-weight: bold;
       width: 100%;
     }
-
-    /* Added: Style the spinner arrows to a faded brown color */
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      filter: brightness(0.9) sepia(0.5) hue-rotate(20deg) saturate(80%);
-    }
   </style>
 </head>
 <body>
@@ -165,7 +159,7 @@
       } else if (glucoseLevel >= 70 && glucoseLevel < 100) {
         result.textContent = `✅ ${glucoseLevel} mg/dL - Normal blood sugar level.`;
         result.style.color = "green";
-        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Good: green
+        container.style.boxShadow = "0 8px 25px rgba(0,255,0,1)"; // Good: stronger green
         inputField.style.setProperty("--placeholder-color", "green");
       } else if (glucoseLevel >= 100 && glucoseLevel <= 125) {
         result.textContent = `⚠️ ${glucoseLevel} mg/dL - Prediabetes detected! Consider lifestyle changes.`;
@@ -188,24 +182,21 @@
       sound.play();
     }
 
-    // Event listener to enable/disable the button based on input and clear result,
-    // also sets default container shadow and placeholder color when input is empty
+    // Combined event listener to enable/disable the button, clear result,
+    // and play the typing sound on every input keystroke
     inputField.addEventListener("input", function() {
       let glucoseLevel = inputField.value;
       let button = document.getElementById("check-status-btn");
       if (glucoseLevel.trim() === "") {
         button.disabled = true;
         document.getElementById("result").textContent = "";
-        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)";
+        container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)"; // Default: glowy blue
         inputField.style.setProperty("--placeholder-color", "#2C3E50");
       } else {
         button.disabled = false;
         document.getElementById("result").textContent = "";
       }
-    });
-
-    // Event listener to play typing sound on every keystroke in the input field
-    inputField.addEventListener("input", function() {
+      // Play typing sound on input
       let typingSound = document.getElementById("typing-sound");
       typingSound.currentTime = 0;
       typingSound.play();
