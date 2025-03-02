@@ -114,37 +114,37 @@
     <button id="check-status-btn" onclick="checkGlucose(); playClickSound();" disabled>Check Status</button>
     <p id="result"></p>
     <p class="urdu-name">محمد عبد اللہ عمر</p>
-
+    
     <!-- Soft Click Sound -->
     <audio id="click-sound" preload="auto">
       <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mp3">
     </audio>
-
+    
     <!-- Typing Sound -->
     <audio id="typing-sound" preload="auto">
       <source src="https://www.soundjay.com/keyboard/sounds/keyboard-1.mp3" type="audio/mp3">
     </audio>
   </div>
-
+  
   <script>
     let sound = document.getElementById("click-sound");
     let inputField = document.getElementById("glucose-level");
     let container = document.querySelector(".container");
-
+    
     // Function to check glucose level when the button is clicked
     function checkGlucose() {
       let glucoseLevel = inputField.value;
       let result = document.getElementById("result");
-
+      
       if (glucoseLevel === "" || isNaN(glucoseLevel) || glucoseLevel < 0) {
         result.textContent = "";
         container.style.boxShadow = "0 8px 25px rgba(0,0,255,0.8)"; // Default: glowy blue
         inputField.style.setProperty("--placeholder-color", "#2C3E50"); // Default placeholder color
         return;
       }
-
+      
       glucoseLevel = parseFloat(glucoseLevel);
-
+      
       if (glucoseLevel < 40) {
         result.textContent = `⚠️ ${glucoseLevel} mg/dL - Very Low! Seek immediate help.`;
         result.style.color = "blue";
@@ -172,17 +172,16 @@
         inputField.style.setProperty("--placeholder-color", "red");
       }
     }
-
+    
     // Function to play the click sound immediately without delay
     function playClickSound() {
       let glucoseLevel = inputField.value;
-      if (glucoseLevel.trim() === "") return;
+      if (glucoseLevel.trim() === "") return; // Don't play if input is empty
       sound.currentTime = 0;
       sound.play();
     }
-
-    // Combined event listener for input: enable/disable button, clear result,
-    // and set default container shadow and placeholder color when input is empty.
+    
+    // Combined event listener: enable/disable button, clear result, and play typing sound.
     inputField.addEventListener("input", function() {
       let glucoseLevel = inputField.value;
       let button = document.getElementById("check-status-btn");
@@ -195,17 +194,14 @@
         button.disabled = false;
         document.getElementById("result").textContent = "";
       }
+      // Play typing sound only if the input field is focused
+      if (document.activeElement === inputField) {
+        let typingSound = document.getElementById("typing-sound");
+        typingSound.currentTime = 0;
+        typingSound.play();
+      }
     });
-
-    // Use keydown for typing sound so that the keyboard opens normally on mobile
-    inputField.addEventListener("keydown", function(event) {
-      // Don't play if the key is Enter
-      if (event.key === "Enter") return;
-      let typingSound = document.getElementById("typing-sound");
-      typingSound.currentTime = 0;
-      typingSound.play();
-    });
-
+    
     // Allow the user to press Enter to check glucose level
     inputField.addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
